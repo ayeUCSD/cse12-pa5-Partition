@@ -1,6 +1,8 @@
 
 // These are some imports that the course staff found useful, feel free to use them
 // along with other imports from java.util.
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,12 +38,59 @@ public class PartitionOracle {
     // The three methods below are for you to fill in according to the PA writeup.
     // Feel free to make other helper methods as needed.
 
+    /*
+     * Return null if the pivot and after array reflect a correct partitioning of
+     * the before array between low and high.
+     *
+     * Return a non-null String (your choice) describing why it isn't a valid
+     * partition if it is not a valid result. You might choose Strings like these,
+     * though there may be more you want to report:
+     *
+     * - "after array doesn't have same elements as before"
+     * - "Item before pivot too large"
+     * - "Item after pivot too small"
+     */
     public static String isValidPartitionResult(String[] before, int low, int high, int pivot, String[] after) {
+        if (before.length != after.length) {
+            return "LENGTH CHECK: Before and After len different!";
+        }
+        if (before[pivot] != after[pivot]) {
+            // return "PIVOT CHECK: Pivot Values are wrong!";
+        }
+
+        // this is the string length at the pivot!
+        String pStr = after[pivot];
+
+        for (int i = low; i < pivot; i++) {
+            if (after[i].compareTo(pStr) > 0) {
+                return "LOW CHECK: Element at index [" + i + "] is " + after[i] + " and greater than "
+                        + pStr;
+            }
+        }
+        for (int i = high; i >= pivot; i--) {
+            if (after[i].compareTo(pStr) < 0) {
+                return "HIGH CHECK: Element len at index [" + i + "] is " + after[i] + " and less than "
+                        + pStr;
+            }
+        }
+
         return null;
     }
 
+    public static String getRandLetter() {
+        Random r = new Random();
+        int asciiForACapLetter = r.nextInt(26) + 65; // Generates a random letter from A - Z
+        return Character.toString((char) (asciiForACapLetter));
+
+    }
+
     public static String[] generateInput(int n) {
-        return new String[0];
+        ArrayList<String> output = new ArrayList<>();
+        for (; n > 0; n--) {
+            output.add(getRandLetter());
+        }
+
+        return output.toArray(new String[] {});
     }
 
     public static CounterExample findCounterExample(Partitioner p) {
