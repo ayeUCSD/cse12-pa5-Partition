@@ -54,9 +54,9 @@ public class PartitionOracle {
         if (before.length != after.length) {
             return "LENGTH CHECK: Before and After len different!";
         }
-        if (before[pivot] != after[pivot]) {
-            // return "PIVOT CHECK: Pivot Values are wrong!";
-        }
+
+        //maybe check if the values in before and after are all the same? no dropped information
+        
 
         // this is the string length at the pivot!
         String pStr = after[pivot];

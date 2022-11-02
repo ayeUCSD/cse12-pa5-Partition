@@ -5,43 +5,86 @@ import org.junit.Test;
 /**
  * This is an example of how to implement the Partitioner interface to implement
  * a concrete Partitioner. You can use this bad implementation to test your
- * PartitionOracle,
- * to ensure that it works in detecting a bad Partitioner. You should add a
- * correct implementation
- * of a Partitioner here, maybe one from class, to verify that your
- * PartitionOracle also works
- * correctly on good implementations. Once you implement part 2, you can also
- * test those Partitioner
- * implementations here as well.
+ * PartitionOracle, to ensure that it works in detecting a bad Partitioner. You
+ * should add a correct implementation of a Partitioner here, maybe one from
+ * class, to verify that your PartitionOracle also works correctly on good
+ * implementations. Once you implement part 2, you can also test those
+ * Partitioner implementations here as well.
  * 
  */
 class CopyFirstElementPartition implements Partitioner {
-    public int partition(String[] strs, int low, int high) {
-        if (high - low < 1)
-            return 0;
-        for (int i = 0; i < strs.length; i += 1) {
-            strs[i] = strs[0];
-        }
-        return 0;
-    }
+	public int partition(String[] strs, int low, int high) {
+		if (high - low < 1)
+			return 0;
+		for (int i = 0; i < strs.length; i += 1) {
+			strs[i] = strs[0];
+		}
+		return 0;
+	}
+}
+
+class PartitionFromClass implements Partitioner {
+
+	PartitionFromClass() {
+	}
+
+	public static void swap(String[] array, int i1, int i2) {
+		String temp = array[i1];
+		array[i1] = array[i2];
+		array[i2] = temp;
+	}
+
+	public int partition(String[] strs, int low, int high) {
+		int pivotStartIndex = high - 1;
+		String pivot = strs[pivotStartIndex];
+		int smallerBefore = low, largerAfter = high - 2;
+
+		while (smallerBefore <= largerAfter) {
+			if (strs[smallerBefore].compareTo(pivot) < 0) {
+				smallerBefore += 1;
+			} else {
+				swap(strs, smallerBefore, largerAfter);
+				//if (largerAfter + 1 < strs.length) 
+				{
+					largerAfter += 1;
+				}
+			}
+		}
+
+		swap(strs, smallerBefore, pivotStartIndex);
+		return smallerBefore; // this is now the pivot value/ index
+	}
 }
 
 public class TestPartitionOracle {
-    @Test
-    public void testCopyFirstElementPartition() {
-        CounterExample ce = PartitionOracle.findCounterExample(new CopyFirstElementPartition());
-        System.out.println(ce);
-        assertNotNull(ce);
-    }
+	@Test
+	public void testCopyFirstElementPartition() {
+		CounterExample ce = PartitionOracle.findCounterExample(new CopyFirstElementPartition());
+		System.out.println(ce);
+		assertNotNull(ce);
+	}
 
-    @Test
-    public void testValidPartitionResult() {
-        String[] before = { "d", "b", "c", "a", "e", "d", "b", "c", "a", "e" };
-        String[] after =  { "d", "b", "c", "a", "e", "c", "d", "d", "e", "e"  };
-        int pivot = 4;
-        int low = 0;
-        int high = 4;
-        assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
-    }
+	@Test
+	public void testValidPartitionResult() {
+		String[] before = { "d", "b", "c", "a", "e", "d", "b", "c", "a", "e" };
+		String[] after = { "d", "b", "c", "a", "e", "c", "d", "d", "e", "e" };
+		int pivot = 4;
+		int low = 0;
+		int high = 4;
+		assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
+	}
+
+	@Test
+	public void testClassPartitioner() {
+		String[] before = { "d", "b", "c", "a", "e", "d", "b", "c", "a", "e" };
+		String[] after = PartitionOracle.generateInput(10);
+
+		Partitioner p = new PartitionFromClass();
+		int low = 3;
+		int high = 7;
+		int pivot = p.partition(after, low, high); // should modify after[]
+
+		assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
+	}
 
 }
