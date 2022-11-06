@@ -1,5 +1,7 @@
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 /**
@@ -34,7 +36,7 @@ class PartitionFromClass implements Partitioner {
 		array[i2] = temp;
 	}
 
-	public int partition(String[] strs, int low, int high) {
+	public int partitionFromClass(String[] strs, int low, int high) {
 		int pivotStartIndex = high - 1;
 		String pivot = strs[pivotStartIndex];
 		int smallerBefore = low, largerAfter = high - 2;
@@ -44,7 +46,7 @@ class PartitionFromClass implements Partitioner {
 				smallerBefore += 1;
 			} else {
 				swap(strs, smallerBefore, largerAfter);
-				//if (largerAfter + 1 < strs.length) 
+				// if (largerAfter + 1 < strs.length)
 				{
 					largerAfter += 1;
 				}
@@ -54,37 +56,77 @@ class PartitionFromClass implements Partitioner {
 		swap(strs, smallerBefore, pivotStartIndex);
 		return smallerBefore; // this is now the pivot value/ index
 	}
+	/**
+	 * Partitioner gotten from github below:
+	 * https://github.com/pedrovgs/Algorithms/blob/master/src/main/java/com/github/pedrovgs/problem80/QuickSort.java
+	 * Modified for strings
+	 */
+	public int partition(String[] str, int left, int right) {
+		String pivot = str[right];
+		int i = left - 1;
+		for (int j = left; j < right; ++j) {
+			if (str[j].compareTo(pivot) <= 0) {
+				swap(str, ++i, j);
+			}
+		}
+		swap(str, ++i, right);
+		return i;
+	}
+
 }
 
 public class TestPartitionOracle {
 	@Test
 	public void testCopyFirstElementPartition() {
+		System.out.println("CopyFirstElementTest:");
 		CounterExample ce = PartitionOracle.findCounterExample(new CopyFirstElementPartition());
+		
 		System.out.println(ce);
 		assertNotNull(ce);
+		System.out.println("Done!\n");
 	}
 
 	@Test
 	public void testValidPartitionResult() {
+		System.out.println("Testing ValidPartitionResult:");
 		String[] before = { "d", "b", "c", "a", "e", "d", "b", "c", "a", "e" };
 		String[] after = { "d", "b", "c", "a", "e", "c", "d", "d", "e", "e" };
 		int pivot = 4;
 		int low = 0;
 		int high = 4;
 		assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
+		System.out.println("Done!\n");
 	}
 
 	@Test
-	public void testClassPartitioner() {
-		String[] before = { "d", "b", "c", "a", "e", "d", "b", "c", "a", "e" };
-		String[] after = PartitionOracle.generateInput(10);
-
+	public void testInternetPartition() {
+		System.out.println("Testing testInternetPartition:");
 		Partitioner p = new PartitionFromClass();
-		int low = 3;
-		int high = 7;
-		int pivot = p.partition(after, low, high); // should modify after[]
-
-		assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
+		CounterExample ce = PartitionOracle.findCounterExample(p);
+		//assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
+		System.out.println(ce);
+		assertNull(ce);
+		System.out.println("Done!\n");
+	}
+	@Test
+	public void testCenterPartition() {
+		System.out.println("Testing CenterPartition:");
+		Partitioner p = new CentralPivotPartitioner();
+		CounterExample ce = PartitionOracle.findCounterExample(p);
+		//assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
+		System.out.println(ce);
+		assertNull(ce);
+		System.out.println("Done!\n");
 	}
 
+	@Test
+	public void testFirstPartition() {
+		System.out.println("Testing FirstPivotPartition:");
+		Partitioner p = new FirstElePivotPartitioner();
+		CounterExample ce = PartitionOracle.findCounterExample(p);
+		//assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
+		System.out.println(ce);
+		assertNull(ce);
+		System.out.println("Done!\n");
+	}
 }

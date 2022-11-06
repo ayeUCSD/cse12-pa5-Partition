@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
 public class PartitionOracle {
 
     /**
@@ -51,14 +50,27 @@ public class PartitionOracle {
      * - "Item after pivot too small"
      */
     public static String isValidPartitionResult(String[] before, int low, int high, int pivot, String[] after) {
-        if (before.length != after.length) {
-            return "LENGTH CHECK: Before and After len different!";
+    	System.out.println("Pivot: " + pivot);
+    	if (before.length != after.length) {
+            return "LENGTH CHECK: Before and After lengths are different!";
         }
 
         //maybe check if the values in before and after are all the same? no dropped information
-        
+        //check elements are retained
+        boolean altered = false;
+        String missing = "";
+        ArrayList<String> temp = new ArrayList<String>(Arrays.asList(after));
+       for(String s : before) {
+    	   if(!temp.contains(s)) {
+    		   missing = s;
+    		   altered = true;
+    	   }
+       }
+       if(altered) {
+    	   return "ALTERED CHECK: elements in After do not match elements in Before! Missing: " + missing;
+       }
 
-        // this is the string length at the pivot!
+        // this is the string at the pivot!
         String pStr = after[pivot];
 
         for (int i = low; i < pivot; i++) {
@@ -67,9 +79,9 @@ public class PartitionOracle {
                         + pStr;
             }
         }
-        for (int i = high; i >= pivot; i--) {
+        for (int i = high-1; i >= pivot; i--) {
             if (after[i].compareTo(pStr) < 0) {
-                return "HIGH CHECK: Element len at index [" + i + "] is " + after[i] + " and less than "
+                return "HIGH CHECK: Element at index [" + i + "] is " + after[i] + " and less than "
                         + pStr;
             }
         }
@@ -94,7 +106,22 @@ public class PartitionOracle {
     }
 
     public static CounterExample findCounterExample(Partitioner p) {
-        return null;
+    	//create a random String array between size 1 and 100
+        String[] before = generateInput( (int) (Math.random()*10) + 1); 
+    	String[] after = Arrays.copyOf(before, before.length);
+    	System.out.println("Before: " + Arrays.toString(before) + before.length);
+    	
+    	int low = 0;
+    	int high = after.length-1;
+    	int pivot = p.partition(after, low, high);
+    	System.out.println("After: " + Arrays.toString(after));
+    	
+        String output = isValidPartitionResult(before,low,high,pivot ,after);
+    	if(output == null)
+    		return null;
+    	else {
+    		return new CounterExample(before,low,high,pivot ,after,output);
+    	}
     }
 
 }
