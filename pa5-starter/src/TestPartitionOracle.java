@@ -103,7 +103,6 @@ public class TestPartitionOracle {
 		System.out.println("Testing testInternetPartition:");
 		Partitioner p = new PartitionFromClass();
 		CounterExample ce = PartitionOracle.findCounterExample(p);
-		//assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
 		System.out.println(ce);
 		assertNull(ce);
 		System.out.println("Done!\n");
@@ -113,7 +112,6 @@ public class TestPartitionOracle {
 		System.out.println("Testing CenterPartition:");
 		Partitioner p = new CentralPivotPartitioner();
 		CounterExample ce = PartitionOracle.findCounterExample(p);
-		//assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
 		System.out.println(ce);
 		assertNull(ce);
 		System.out.println("Done!\n");
@@ -124,7 +122,6 @@ public class TestPartitionOracle {
 		System.out.println("Testing FirstPivotPartition:");
 		Partitioner p = new FirstElePivotPartitioner();
 		CounterExample ce = PartitionOracle.findCounterExample(p);
-		//assertNull(PartitionOracle.isValidPartitionResult(before, low, high, pivot, after));
 		System.out.println(ce);
 		assertNull(ce);
 		System.out.println("Done!\n");
